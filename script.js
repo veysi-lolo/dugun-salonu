@@ -1,309 +1,475 @@
-/* ============================================================
-   ALTIN SARAY — script.js v2
-   Takvim: her gün iki yarıya bölünmüş (gündüz / akşam)
-   ============================================================ */
+/* ═══════════════════════════════════════════════════════════════
+   ALTIN SARAY  ·  script.js v3
+   Clean English variable names, Turkish UI text preserved
+   ═══════════════════════════════════════════════════════════════ */
 
-const MONTHS = [
+'use strict';
+
+/* ── Constants ──────────────────────────────────────────────── */
+const MONTH_NAMES = [
   'Ocak','Şubat','Mart','Nisan','Mayıs','Haziran',
   'Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'
 ];
-const TODAY = new Date();
 
-let cY = TODAY.getFullYear();
-let cM = TODAY.getMonth();
+const TODAY       = new Date();
+const TODAY_START = new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate());
 
-/* ----------------------------------------------------------------
-   BOOKINGS DATA
-   key  → "YYYY-M-D"
-   val  → { top: bool, bot: bool }   (top=gündüz, bot=akşam)
-   Gerçek projede bu veri API/backend'den gelir.
----------------------------------------------------------------- */
-const bookings = {};
+/* ── Calendar state ─────────────────────────────────────────── */
+let calendarYear  = TODAY.getFullYear();
+let calendarMonth = TODAY.getMonth();
 
-function seedBookings() {
-  const base = new Date(TODAY);
-  for (let i = 1; i <= 60; i++) {
-    const d = new Date(base);
-    d.setDate(base.getDate() + i);
-    const isWeekend = (d.getDay() === 6 || d.getDay() === 0);
-    const topBooked = isWeekend ? Math.random() > 0.35 : Math.random() > 0.60;
-    const botBooked = isWeekend ? Math.random() > 0.30 : Math.random() > 0.55;
+let selectedDate = null; // { year, month, day }
+let selectedSlot = null; // 'top' | 'bot' | 'both'
+
+/* ── Booking data ───────────────────────────────────────────── */
+// Key format: "YYYY-M-D"  |  value: { top: bool, bot: bool }
+// In a real project this comes from an API / Supabase etc.
+const bookingMap = {};
+
+function seedDemoBookings() {
+  for (let offsetDays = 1; offsetDays <= 90; offsetDays++) {
+    const date     = new Date(TODAY);
+    date.setDate(TODAY.getDate() + offsetDays);
+    const isWeekend = (date.getDay() === 0 || date.getDay() === 6);
+    const topBooked = isWeekend ? Math.random() > 0.38 : Math.random() > 0.62;
+    const botBooked = isWeekend ? Math.random() > 0.32 : Math.random() > 0.58;
     if (topBooked || botBooked) {
-      const key = d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
-      bookings[key] = { top: topBooked, bot: botBooked };
+      const key = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+      bookingMap[key] = { top: topBooked, bot: botBooked };
     }
   }
 }
-seedBookings();
 
-function getBooking(y, m, d) {
-  return bookings[y + '-' + m + '-' + d] || { top: false, bot: false };
+function getBookingStatus(year, month, day) {
+  return bookingMap[`${year}-${month}-${day}`] || { top: false, bot: false };
 }
 
-/* ---- Selection state ---- */
-let selDate = null;   // { y, m, d }
-let selSlot = null;   // 'top' | 'bot' | 'both'
+/* ── Slot class resolver ────────────────────────────────────── */
+function resolveSlotClass(isPast, isBooked, isSelected) {
+  if (isPast)     return 'slot-is-past';
+  if (isBooked)   return 'slot-is-booked';
+  if (isSelected) return 'slot-is-selected';
+  return 'slot-is-free';
+}
 
-/* ================================================================
-   CALENDAR RENDER
-================================================================ */
-function renderCal() {
-  const lbl = document.getElementById('cal-lbl');
-  if (lbl) lbl.textContent = MONTHS[cM] + ' ' + cY;
+/* ═══════════════════════════════════════════════════════════════
+   CALENDAR
+   ═══════════════════════════════════════════════════════════════ */
+function renderCalendar() {
+  const monthLabel = document.getElementById('calendarMonthLabel');
+  if (monthLabel) {
+    monthLabel.textContent = `${MONTH_NAMES[calendarMonth]} ${calendarYear}`;
+  }
 
-  const grid = document.getElementById('cal-grid');
+  const grid = document.getElementById('calendarGrid');
   if (!grid) return;
   grid.innerHTML = '';
 
-  const firstDay = new Date(cY, cM, 1).getDay();
-  const offset   = (firstDay === 0) ? 6 : firstDay - 1;
-  const total    = new Date(cY, cM + 1, 0).getDate();
-  const todayMid = new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate());
+  const firstWeekday = new Date(calendarYear, calendarMonth, 1).getDay();
+  const leadingBlanks = firstWeekday === 0 ? 6 : firstWeekday - 1;
+  const daysInMonth   = new Date(calendarYear, calendarMonth + 1, 0).getDate();
 
-  /* Empty leading cells */
-  for (let i = 0; i < offset; i++) {
-    const el = document.createElement('div');
-    el.className = 'cday empty';
-    grid.appendChild(el);
+  // Leading blank cells
+  for (let i = 0; i < leadingBlanks; i++) {
+    const blank = document.createElement('div');
+    blank.className = 'day-cell is-empty';
+    grid.appendChild(blank);
   }
 
-  /* Day cells */
-  for (let d = 1; d <= total; d++) {
-    const thisDate = new Date(cY, cM, d);
-    const isPast   = thisDate < todayMid;
-    const isToday  = thisDate.getTime() === todayMid.getTime();
-    const bk       = getBooking(cY, cM, d);
-    const isSel    = selDate && selDate.y === cY && selDate.m === cM && selDate.d === d;
+  // Day cells
+  for (let dayNumber = 1; dayNumber <= daysInMonth; dayNumber++) {
+    const cellDate  = new Date(calendarYear, calendarMonth, dayNumber);
+    const isPast    = cellDate < TODAY_START;
+    const isToday   = cellDate.getTime() === TODAY_START.getTime();
+    const booking   = getBookingStatus(calendarYear, calendarMonth, dayNumber);
 
+    const isThisDaySelected =
+      selectedDate &&
+      selectedDate.year  === calendarYear &&
+      selectedDate.month === calendarMonth &&
+      selectedDate.day   === dayNumber;
+
+    const topSelected = isThisDaySelected && (selectedSlot === 'top' || selectedSlot === 'both');
+    const botSelected = isThisDaySelected && (selectedSlot === 'bot' || selectedSlot === 'both');
+
+    // Build cell
     const cell = document.createElement('div');
-    cell.className = 'cday' + (isPast ? ' past' : '') + (isToday ? ' today' : '');
+    cell.className = 'day-cell' +
+      (isPast   ? ' is-past'  : '') +
+      (isToday  ? ' is-today' : '');
+    cell.setAttribute('role', 'gridcell');
+    cell.setAttribute('aria-label', `${dayNumber} ${MONTH_NAMES[calendarMonth]}`);
 
-    /* Inner div holding top & bottom halves */
-    const inner = document.createElement('div');
-    inner.className = 'day-inner';
+    // Two-slot container
+    const halves = document.createElement('div');
+    halves.className = 'day-halves';
 
-    const topEl = document.createElement('div');
-    const botEl = document.createElement('div');
-    topEl.className = 'slot-top ' + slotClass(isPast, bk.top, isSel && (selSlot === 'top' || selSlot === 'both'));
-    botEl.className = 'slot-bot ' + slotClass(isPast, bk.bot, isSel && (selSlot === 'bot' || selSlot === 'both'));
+    const topSlot = document.createElement('div');
+    topSlot.className = 'day-slot-top ' + resolveSlotClass(isPast, booking.top, topSelected);
+    topSlot.setAttribute('aria-label', 'Gündüz 13:00–17:00');
+    topSlot.setAttribute('role', 'button');
+    topSlot.setAttribute('tabindex', isPast || booking.top ? '-1' : '0');
 
-    inner.appendChild(topEl);
-    inner.appendChild(botEl);
+    const botSlot = document.createElement('div');
+    botSlot.className = 'day-slot-bot ' + resolveSlotClass(isPast, booking.bot, botSelected);
+    botSlot.setAttribute('aria-label', 'Akşam 19:00–23:00');
+    botSlot.setAttribute('role', 'button');
+    botSlot.setAttribute('tabindex', isPast || booking.bot ? '-1' : '0');
 
-    /* Day number label */
-    const num = document.createElement('div');
-    num.className = 'day-num';
-    num.textContent = d;
+    halves.appendChild(topSlot);
+    halves.appendChild(botSlot);
 
-    cell.appendChild(inner);
-    cell.appendChild(num);
+    // Day number label
+    const label = document.createElement('div');
+    label.className = 'day-number';
+    label.textContent = dayNumber;
+    label.setAttribute('aria-hidden', 'true');
 
-    /* Click handlers (only for future days) */
+    cell.appendChild(halves);
+    cell.appendChild(label);
+
+    // Event listeners
     if (!isPast) {
-      topEl.addEventListener('click', function (e) {
-        e.stopPropagation();
-        if (bk.top) return;
-        handleSlotClick(cY, cM, d, 'top');
-      });
-      botEl.addEventListener('click', function (e) {
-        e.stopPropagation();
-        if (bk.bot) return;
-        handleSlotClick(cY, cM, d, 'bot');
-      });
+      if (!booking.top) {
+        topSlot.addEventListener('click', (e) => {
+          e.stopPropagation();
+          handleSlotSelection(calendarYear, calendarMonth, dayNumber, 'top');
+        });
+        topSlot.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleSlotSelection(calendarYear, calendarMonth, dayNumber, 'top');
+          }
+        });
+      }
+      if (!booking.bot) {
+        botSlot.addEventListener('click', (e) => {
+          e.stopPropagation();
+          handleSlotSelection(calendarYear, calendarMonth, dayNumber, 'bot');
+        });
+        botSlot.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleSlotSelection(calendarYear, calendarMonth, dayNumber, 'bot');
+          }
+        });
+      }
     }
 
     grid.appendChild(cell);
   }
 }
 
-function slotClass(isPast, isBooked, isSelected) {
-  if (isPast)       return 'slot-past';
-  if (isBooked)     return 'slot-booked';
-  if (isSelected)   return 'slot-selected';
-  return 'slot-free';
-}
+/* ── Slot selection logic ───────────────────────────────────── */
+function handleSlotSelection(year, month, day, slotClicked) {
+  const isSameDay =
+    selectedDate &&
+    selectedDate.year  === year &&
+    selectedDate.month === month &&
+    selectedDate.day   === day;
 
-/* ----------------------------------------------------------------
-   Slot click logic
-   Same day → toggle / combine selections
-   Different day → start fresh
----------------------------------------------------------------- */
-function handleSlotClick(y, m, d, slot) {
-  if (selDate && selDate.y === y && selDate.m === m && selDate.d === d) {
-    if (selSlot === slot) {
-      /* Clicked same slot → deselect everything */
-      selDate = null;
-      selSlot = null;
-    } else if (selSlot === 'both') {
-      /* Deselect one of the two */
-      selSlot = (slot === 'top') ? 'bot' : 'top';
+  if (isSameDay) {
+    if (selectedSlot === slotClicked) {
+      // Deselect entirely
+      selectedDate = null;
+      selectedSlot = null;
+    } else if (selectedSlot === 'both') {
+      // Remove one half
+      selectedSlot = slotClicked === 'top' ? 'bot' : 'top';
     } else {
-      /* Different slot on same day → combine if both free */
-      const bk = getBooking(y, m, d);
-      const otherBooked = (slot === 'top') ? bk.top : bk.bot;
-      if (!otherBooked) selSlot = 'both';
+      // Combine into full-day if other slot is free
+      const booking     = getBookingStatus(year, month, day);
+      const otherBooked = slotClicked === 'top' ? booking.top : booking.bot;
+      if (!otherBooked) {
+        selectedSlot = 'both';
+      }
     }
   } else {
-    /* New day */
-    selDate = { y, m, d };
-    selSlot = slot;
+    // New day selected
+    selectedDate = { year, month, day };
+    selectedSlot = slotClicked;
   }
-  renderCal();
-  updateSelSummary();
+
+  renderCalendar();
+  updateSelectionSummary();
 }
 
-function updateSelSummary() {
-  const box = document.getElementById('sel-summary');
-  if (!box) return;
-  if (!selDate) { box.style.display = 'none'; return; }
+function updateSelectionSummary() {
+  const summaryEl = document.getElementById('selectionSummary');
+  if (!summaryEl) return;
+
+  if (!selectedDate) {
+    summaryEl.style.display = 'none';
+    return;
+  }
 
   const slotLabel =
-    selSlot === 'top'  ? 'Gündüz (13:00 – 17:00)' :
-    selSlot === 'bot'  ? 'Akşam (19:00 – 23:00)'  :
-                         'Gündüz + Akşam (Tam Gün)';
+    selectedSlot === 'top'  ? 'Gündüz (13:00 – 17:00)'     :
+    selectedSlot === 'bot'  ? 'Akşam (19:00 – 23:00)'      :
+                              'Gündüz + Akşam (Tam Gün)';
 
-  box.style.display = 'block';
-  box.innerHTML =
-    '<strong>Seçilen Tarih:</strong> ' +
-    selDate.d + ' ' + MONTHS[selDate.m] + ' ' + selDate.y +
-    '&nbsp;&nbsp;·&nbsp;&nbsp;<strong>Vakit:</strong> ' + slotLabel;
+  summaryEl.style.display = 'block';
+  summaryEl.innerHTML =
+    `<strong>Seçilen Tarih:</strong> ${selectedDate.day} ${MONTH_NAMES[selectedDate.month]} ${selectedDate.year}` +
+    `&nbsp;&nbsp;·&nbsp;&nbsp;<strong>Vakit:</strong> ${slotLabel}`;
 }
 
-/* ---- Month navigation ---- */
-function PM() {
-  if (cM === 0) { cM = 11; cY--; } else cM--;
-  renderCal();
-}
-function NM() {
-  if (cM === 11) { cM = 0; cY++; } else cM++;
-  renderCal();
+/* ── Month navigation ───────────────────────────────────────── */
+function goToPrevMonth() {
+  if (calendarMonth === 0) { calendarMonth = 11; calendarYear--; }
+  else calendarMonth--;
+  renderCalendar();
 }
 
-/* ================================================================
+function goToNextMonth() {
+  if (calendarMonth === 11) { calendarMonth = 0; calendarYear++; }
+  else calendarMonth++;
+  renderCalendar();
+}
+
+/* ═══════════════════════════════════════════════════════════════
    PAGE NAVIGATION
-================================================================ */
-function SP(p) {
-  document.querySelectorAll('.page').forEach(pg => {
-    pg.classList.remove('active');
-    pg.style.display = 'none';
+   ═══════════════════════════════════════════════════════════════ */
+function navigateToPage(pageId) {
+  // Remove active state from all pages
+  document.querySelectorAll('.page').forEach(page => {
+    page.classList.remove('is-active');
+    page.style.display = 'none';
   });
 
-  const target = document.getElementById('page-' + p);
-  if (target) {
-    target.style.display = 'block';
-    /* Trigger reflow so animation fires */
-    void target.offsetWidth;
-    target.classList.add('active');
-  }
+  const targetPage = document.getElementById(`page-${pageId}`);
+  if (!targetPage) return;
+
+  targetPage.style.display = 'block';
+  // Trigger reflow to allow animation restart
+  void targetPage.offsetWidth;
+  targetPage.classList.add('is-active');
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  if (p === 'rezervasyon') {
-    /* Sync calendar to current month */
-    cY = TODAY.getFullYear();
-    cM = TODAY.getMonth();
-    setTimeout(renderCal, 80);
+  if (pageId === 'rezervasyon') {
+    // Reset calendar to current month
+    calendarYear  = TODAY.getFullYear();
+    calendarMonth = TODAY.getMonth();
+    setTimeout(renderCalendar, 100);
 
-    /* Reset form / success state */
-    const form    = document.getElementById('rezv-form');
-    const success = document.getElementById('success-box');
-    if (form)    form.style.display    = '';
-    if (success) success.style.display = 'none';
+    // Reset form/success visibility
+    const formEl    = document.getElementById('reservationForm');
+    const successEl = document.getElementById('successState');
+    if (formEl)    formEl.style.display    = '';
+    if (successEl) successEl.style.display = 'none';
   }
 
-  /* Close mobile menu */
-  const menu = document.getElementById('nav-menu');
-  if (menu) menu.classList.remove('open');
+  // Close mobile menu
+  closeMobileMenu();
 }
 
-function NT(sectionId) {
-  SP('home');
+function scrollToSection(sectionId) {
+  navigateToPage('home');
   setTimeout(() => {
-    const el = document.getElementById(sectionId);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  }, 160);
-}
-
-function OR(salonName) {
-  SP('rezervasyon');
-  setTimeout(() => {
-    const sel = document.getElementById('salon-sel');
-    if (!sel) return;
-    for (const opt of sel.options) {
-      if (opt.value === salonName) { sel.value = salonName; break; }
-    }
+    const section = document.getElementById(sectionId);
+    if (section) section.scrollIntoView({ behavior: 'smooth' });
   }, 180);
 }
 
-/* ================================================================
-   HAMBURGER MENU
-================================================================ */
-function toggleMenu() {
-  const menu = document.getElementById('nav-menu');
-  if (menu) menu.classList.toggle('open');
+function openReservationFor(venueName) {
+  navigateToPage('rezervasyon');
+  setTimeout(() => {
+    const venueSelect = document.getElementById('venueSelect');
+    if (!venueSelect) return;
+    for (const option of venueSelect.options) {
+      if (option.value === venueName) {
+        venueSelect.value = venueName;
+        break;
+      }
+    }
+  }, 200);
 }
 
-/* ================================================================
-   FORM SUBMIT
-================================================================ */
-function SUB() {
-  const name  = (document.getElementById('f-name')  || {}).value?.trim() || '';
-  const phone = (document.getElementById('f-phone') || {}).value?.trim() || '';
-  const email = (document.getElementById('f-email') || {}).value?.trim() || '';
-  const salon = (document.getElementById('salon-sel') || {}).value || '';
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE MENU
+   ═══════════════════════════════════════════════════════════════ */
+function toggleMobileMenu() {
+  const menu   = document.getElementById('navMenu');
+  const button = document.getElementById('hamburgerBtn');
+  if (!menu) return;
 
-  if (!name || !phone || !email) {
+  const isOpen = menu.classList.toggle('is-open');
+  if (button) button.setAttribute('aria-expanded', isOpen.toString());
+}
+
+function closeMobileMenu() {
+  const menu   = document.getElementById('navMenu');
+  const button = document.getElementById('hamburgerBtn');
+  if (menu)   menu.classList.remove('is-open');
+  if (button) button.setAttribute('aria-expanded', 'false');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FORM SUBMISSION
+   ═══════════════════════════════════════════════════════════════ */
+function submitReservation() {
+  const fullName    = document.getElementById('fullName')?.value.trim()    || '';
+  const phoneNumber = document.getElementById('phoneNumber')?.value.trim() || '';
+  const emailAddress= document.getElementById('emailAddress')?.value.trim()|| '';
+  const venueName   = document.getElementById('venueSelect')?.value        || '';
+
+  // Validation
+  if (!fullName || !phoneNumber || !emailAddress) {
     alert('Lütfen ad, telefon ve e-posta alanlarını doldurunuz.');
     return;
   }
-  if (!selDate) {
+  if (!selectedDate) {
     alert('Lütfen takvimden bir tarih ve vakit seçiniz.');
     return;
   }
-  if (!salon) {
+  if (!venueName) {
     alert('Lütfen bir salon seçiniz.');
     return;
   }
 
   const slotLabel =
-    selSlot === 'top'  ? 'Gündüz (13:00 – 17:00)' :
-    selSlot === 'bot'  ? 'Akşam (19:00 – 23:00)'  :
-                         'Gündüz + Akşam (Tam Gün)';
+    selectedSlot === 'top'  ? 'Gündüz (13:00 – 17:00)' :
+    selectedSlot === 'bot'  ? 'Akşam (19:00 – 23:00)'  :
+                              'Gündüz + Akşam (Tam Gün)';
 
-  const dateStr = selDate.d + ' ' + MONTHS[selDate.m] + ' ' + selDate.y;
-  const salonShort = salon.split(' —')[0];
+  const formattedDate =
+    `${selectedDate.day} ${MONTH_NAMES[selectedDate.month]} ${selectedDate.year}`;
 
-  document.getElementById('suc-detail').innerHTML =
-    '<div><strong>Salon:</strong>'     + salonShort + '</div>' +
-    '<div><strong>Tarih:</strong>'     + dateStr    + '</div>' +
-    '<div><strong>Vakit:</strong>'     + slotLabel  + '</div>' +
-    '<div><strong>Ad Soyad:</strong>'  + name       + '</div>' +
-    '<div><strong>Telefon:</strong>'   + phone      + '</div>';
+  const venueShortName = venueName.split(' —')[0];
 
-  const form    = document.getElementById('rezv-form');
-  const success = document.getElementById('success-box');
-  if (form)    form.style.display    = 'none';
-  if (success) success.style.display = 'block';
+  // Populate success screen
+  const detailsEl = document.getElementById('successDetails');
+  if (detailsEl) {
+    detailsEl.innerHTML =
+      `<dd><strong>Salon:</strong>${venueShortName}</dd>` +
+      `<dd><strong>Tarih:</strong>${formattedDate}</dd>` +
+      `<dd><strong>Vakit:</strong>${slotLabel}</dd>` +
+      `<dd><strong>Ad Soyad:</strong>${fullName}</dd>` +
+      `<dd><strong>Telefon:</strong>${phoneNumber}</dd>`;
+  }
+
+  // Switch views
+  const formEl    = document.getElementById('reservationForm');
+  const successEl = document.getElementById('successState');
+  if (formEl)    formEl.style.display    = 'none';
+  if (successEl) successEl.style.display = 'block';
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-/* ================================================================
-   INIT
-================================================================ */
-document.addEventListener('DOMContentLoaded', () => {
-  /* Hide inactive pages without animation on load */
-  document.querySelectorAll('.page:not(.active)').forEach(p => {
-    p.style.display = 'none';
-  });
+/* ═══════════════════════════════════════════════════════════════
+   SCROLL ANIMATIONS (Intersection Observer — replaces Framer Motion)
+   ═══════════════════════════════════════════════════════════════ */
+function initRevealAnimations() {
+  const revealObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const delay = parseInt(entry.target.dataset.delay || '0', 10);
+          setTimeout(() => {
+            entry.target.classList.add('is-visible');
+          }, delay);
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+  );
 
-  /* Sticky nav shadow */
-  const navbar = document.getElementById('navbar');
-  window.addEventListener('scroll', () => {
-    if (navbar) {
-      navbar.style.boxShadow = window.scrollY > 24
-        ? '0 4px 24px rgba(0,0,0,.70)'
-        : 'none';
-    }
+  document.querySelectorAll('.reveal-item').forEach(el => {
+    revealObserver.observe(el);
   });
+}
+
+/* ── Counter animation for stats ───────────────────────────── */
+function animateStatCounters() {
+  const statFigures = document.querySelectorAll('.stat-figure[data-target]');
+
+  const counterObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el     = entry.target;
+        const target = parseInt(el.dataset.target, 10);
+        const duration = 1400;
+        const startTime = performance.now();
+
+        function updateCounter(currentTime) {
+          const elapsed  = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          // Ease out cubic
+          const eased    = 1 - Math.pow(1 - progress, 3);
+          el.textContent = Math.round(eased * target).toLocaleString('tr-TR');
+          if (progress < 1) requestAnimationFrame(updateCounter);
+        }
+
+        requestAnimationFrame(updateCounter);
+        counterObserver.unobserve(el);
+      });
+    },
+    { threshold: 0.5 }
+  );
+
+  statFigures.forEach(el => counterObserver.observe(el));
+}
+
+/* ── Particles ──────────────────────────────────────────────── */
+function initHeroParticles() {
+  const field = document.getElementById('particleField');
+  if (!field) return;
+
+  const PARTICLE_COUNT = 18;
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'hero-particle';
+
+    const xPos     = Math.random() * 100;
+    const yPos     = 30 + Math.random() * 60;
+    const duration = 7 + Math.random() * 8;
+    const delay    = Math.random() * 6;
+    const size     = 1 + Math.random() * 2;
+
+    particle.style.cssText = `
+      left: ${xPos}%;
+      top: ${yPos}%;
+      width: ${size}px;
+      height: ${size}px;
+      --duration: ${duration}s;
+      --delay: ${delay}s;
+    `;
+
+    field.appendChild(particle);
+  }
+}
+
+/* ── Sticky nav shadow ──────────────────────────────────────── */
+function initNavbarScroll() {
+  const navbar = document.getElementById('navbar');
+  if (!navbar) return;
+
+  const scrollHandler = () => {
+    navbar.classList.toggle('is-scrolled', window.scrollY > 20);
+  };
+
+  window.addEventListener('scroll', scrollHandler, { passive: true });
+}
+
+/* ── Page visibility init (hide inactive pages) ─────────────── */
+function initPageVisibility() {
+  document.querySelectorAll('.page:not(.is-active)').forEach(page => {
+    page.style.display = 'none';
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BOOT
+   ═══════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  seedDemoBookings();
+  initPageVisibility();
+  initNavbarScroll();
+  initHeroParticles();
+  initRevealAnimations();
+  animateStatCounters();
 });

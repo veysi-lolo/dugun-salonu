@@ -1,334 +1,490 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Altın Saray — Premium Düğün Mekânları</title>
-<meta name="description" content="İstanbul'un en prestijli düğün mekânı. 6 salon, 500+ başarılı düğün, 15 yıl deneyim.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Altın Saray — Premium Düğün Mekânları</title>
+  <meta name="description" content="İstanbul'un en prestijli düğün mekânı. 6 salon, 500+ başarılı düğün, 15 yıl deneyim." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<nav id="navbar">
-  <div class="nav-inner">
-    <div class="logo" onclick="SP('home')">
-      ✦ ALTIN SARAY
-      <span class="logo-sub">Düğün Mekânları</span>
+  <!-- ─── NAVIGATION ─── -->
+  <nav id="navbar" role="navigation" aria-label="Ana navigasyon">
+    <div class="nav-inner">
+      <button class="nav-logo" onclick="navigateToPage('home')" aria-label="Ana sayfaya git">
+        <span class="nav-logo-mark">✦</span>
+        <span class="nav-logo-text">ALTIN SARAY</span>
+        <span class="nav-logo-sub">Düğün Mekânları</span>
+      </button>
+
+      <button class="nav-hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()" aria-label="Menüyü aç/kapat" aria-expanded="false">
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
+
+      <ul class="nav-menu" id="navMenu" role="menubar">
+        <li role="none"><a role="menuitem" onclick="scrollToSection('hero')">Ana Sayfa</a></li>
+        <li role="none"><a role="menuitem" onclick="scrollToSection('hakkimizda')">Hakkımızda</a></li>
+        <li role="none"><a role="menuitem" onclick="scrollToSection('salonlar')">Salonlarımız</a></li>
+        <li role="none"><a role="menuitem" onclick="scrollToSection('iletisim')">İletişim</a></li>
+      </ul>
+
+      <button class="nav-cta-btn" onclick="navigateToPage('rezervasyon')">Rezervasyon</button>
     </div>
-    <button class="hamburger" onclick="toggleMenu()" aria-label="Menü">☰</button>
-    <ul class="nav-links" id="nav-menu">
-      <li><a onclick="NT('hero')">Ana Sayfa</a></li>
-      <li><a onclick="NT('hakkimizda')">Hakkımızda</a></li>
-      <li><a onclick="NT('salonlar')">Salonlarımız</a></li>
-      <li><a onclick="NT('iletisim')">İletişim</a></li>
-    </ul>
-    <button class="nav-btn" onclick="SP('rezervasyon')">Rezervasyon</button>
-  </div>
-</nav>
+  </nav>
 
-<!-- ========== ANA SAYFA ========== -->
-<div id="page-home" class="page active">
+  <!-- ─── HOME PAGE ─── -->
+  <div id="page-home" class="page is-active">
 
-  <section id="hero" class="hero">
-    <div class="hero-glow"></div>
-    <div class="hero-line"></div>
-    <div class="hero-content">
-      <div class="eyebrow">✦ Premium Düğün Mekânları — İstanbul ✦</div>
-      <h1>Hayalinizdeki Düğünü<br><em>Altın Saray'da</em> Yaşayın</h1>
-      <p class="hero-sub">Her anın bir şiire dönüştüğü, lüksün ve zarafetin buluştuğu eşsiz mekânlar.</p>
-      <div class="hero-btns">
-        <button class="btn-prim" onclick="NT('salonlar')">Salonları Keşfet</button>
-        <button class="btn-sec" onclick="SP('rezervasyon')">Rezervasyon Al</button>
-      </div>
-    </div>
-  </section>
+    <!-- HERO -->
+    <section id="hero" class="hero-section" aria-label="Hero bölümü">
+      <div class="hero-ambient-glow" aria-hidden="true"></div>
+      <div class="hero-particle-field" id="particleField" aria-hidden="true"></div>
+      <div class="hero-bottom-fade" aria-hidden="true"></div>
 
-  <div class="stats-bar">
-    <div class="stats-grid">
-      <div class="stat"><div class="stat-num">500+</div><div class="stat-lbl">Düğün</div></div>
-      <div class="stat"><div class="stat-num">6</div><div class="stat-lbl">Salon</div></div>
-      <div class="stat"><div class="stat-num">15+</div><div class="stat-lbl">Yıl Deneyim</div></div>
-      <div class="stat"><div class="stat-num">2000</div><div class="stat-lbl">Kişi Kapasite</div></div>
-    </div>
-  </div>
-
-  <section id="hakkimizda" class="section dark-bg">
-    <div class="sec-eye">Hikayemiz</div>
-    <h2 class="sec-title"><em>Hakkımızda</em></h2>
-    <div class="gold-line"></div>
-    <div class="about-quote">
-      Altın Saray, 2009 yılından bu yana İstanbul'un kalbinde düğün organizasyonu alanında hizmet vermektedir.
-      Tecrübeli ekibimiz ve görkemli salonlarımızla, her çiftin hayalindeki özel günü mükemmel biçimde tasarlıyoruz.
-      Kapalı balosal salonlarımızdan açık hava kır bahçelerimize uzanan geniş seçenek yelpazemizle,
-      size özel bir düğün deneyimi sunuyoruz.
-    </div>
-    <div class="feat-grid">
-      <div class="feat-card">
-        <div class="feat-icon">👑</div>
-        <h3>Lüks Hizmet</h3>
-        <p>Her detayda mükemmeliyetçi yaklaşımımızla en yüksek kaliteyi sunuyoruz.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🌹</div>
-        <h3>Çiçek Dekoru</h3>
-        <p>Uzman dekorasyon ekibimizle salonunuzu hayalinizdeki gibi süslüyoruz.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🍽️</div>
-        <h3>Gurme Mutfak</h3>
-        <p>Özel şeflerimiz tarafından hazırlanan menülerle misafirlerinizi ağırlayın.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">📸</div>
-        <h3>Fotoğraf & Video</h3>
-        <p>Profesyonel ekibimizle anılarınızı ölümsüzleştiriyoruz.</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="salonlar" class="section">
-    <div class="sec-eye">Mekânlarımız</div>
-    <h2 class="sec-title">Salonlarımız</h2>
-    <div class="gold-line"></div>
-    <p class="sec-sub">Kapalı salonlar ve açık hava kır alanlarından hayalinize en uygun mekânı seçin</p>
-    <div class="halls-grid">
-
-      <div class="hcard">
-        <div class="hcard-img i1"><div class="hcard-icon">🏛️</div><span class="hbadge bi">Kapalı Salon</span></div>
-        <div class="hcard-body">
-          <div class="hcard-name">Kristal Salon</div>
-          <div class="hcard-cap">✦ 800 Kişiye Kadar</div>
-          <ul class="hcard-feats">
-            <li>Avize ve kristal dekorasyon</li>
-            <li>Tam iklimlendirme sistemi</li>
-            <li>Profesyonel ses & ışık</li>
-            <li>VIP misafir odası</li>
-          </ul>
-          <button class="hcard-btn" onclick="OR('Kristal Salon')">Rezervasyon Yap</button>
+      <div class="hero-content animate-on-load">
+        <p class="hero-eyebrow">✦ Premium Düğün Mekânları — İstanbul ✦</p>
+        <h1 class="hero-headline">
+          Hayalinizdeki Düğünü<br />
+          <em class="hero-headline-accent">Altın Saray'da</em> Yaşayın
+        </h1>
+        <p class="hero-subheadline">
+          Her anın bir şiire dönüştüğü, lüksün ve zarafetin buluştuğu eşsiz mekânlar.
+        </p>
+        <div class="hero-actions">
+          <button class="btn-primary" onclick="scrollToSection('salonlar')">
+            <span>Salonları Keşfet</span>
+            <svg class="btn-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button class="btn-secondary" onclick="navigateToPage('rezervasyon')">Rezervasyon Al</button>
         </div>
       </div>
 
-      <div class="hcard">
-        <div class="hcard-img i2"><div class="hcard-icon">💎</div><span class="hbadge bi">Kapalı Salon</span></div>
-        <div class="hcard-body">
-          <div class="hcard-name">Elmas Salon</div>
-          <div class="hcard-cap">✦ 500 Kişiye Kadar</div>
-          <ul class="hcard-feats">
-            <li>Özel dekor & tablo duvarları</li>
-            <li>Şarap mahzeni erişimi</li>
-            <li>Canlı müzik sahnesi</li>
-            <li>Balayı odası dahil</li>
-          </ul>
-          <button class="hcard-btn" onclick="OR('Elmas Salon')">Rezervasyon Yap</button>
-        </div>
+      <div class="hero-scroll-hint" aria-hidden="true">
+        <span class="scroll-label">Keşfet</span>
+        <div class="scroll-line"></div>
       </div>
+    </section>
 
-      <div class="hcard">
-        <div class="hcard-img i3"><div class="hcard-icon">🌟</div><span class="hbadge bi">Kapalı Salon</span></div>
-        <div class="hcard-body">
-          <div class="hcard-name">Yıldız Salon</div>
-          <div class="hcard-cap">✦ 350 Kişiye Kadar</div>
-          <ul class="hcard-feats">
-            <li>Tavan yıldız projeksiyon</li>
-            <li>Özel kokteyl alanı</li>
-            <li>Panoramik şehir manzarası</li>
-            <li>Terasa çıkış imkânı</li>
-          </ul>
-          <button class="hcard-btn" onclick="OR('Yıldız Salon')">Rezervasyon Yap</button>
+    <!-- STATS BAR -->
+    <div class="stats-strip" role="region" aria-label="İstatistikler">
+      <div class="stats-inner">
+        <div class="stat-item">
+          <span class="stat-figure" data-target="500">0</span>
+          <span class="stat-suffix">+</span>
+          <span class="stat-label">Düğün</span>
         </div>
-      </div>
-
-      <div class="hcard">
-        <div class="hcard-img o1"><div class="hcard-icon">🌿</div><span class="hbadge bo">Kır Düğünü</span></div>
-        <div class="hcard-body">
-          <div class="hcard-name">Orman Bahçesi</div>
-          <div class="hcard-cap">✦ 600 Kişiye Kadar</div>
-          <ul class="hcard-feats">
-            <li>Doğal çam ormanı zemin</li>
-            <li>Açık hava dans pisti</li>
-            <li>Kır yemeği organizasyonu</li>
-            <li>Yağmur tentesi dahil</li>
-          </ul>
-          <button class="hcard-btn" onclick="OR('Orman Bahçesi')">Rezervasyon Yap</button>
+        <div class="stat-divider" aria-hidden="true"></div>
+        <div class="stat-item">
+          <span class="stat-figure" data-target="6">0</span>
+          <span class="stat-suffix"></span>
+          <span class="stat-label">Salon</span>
         </div>
-      </div>
-
-      <div class="hcard">
-        <div class="hcard-img o2"><div class="hcard-icon">🌸</div><span class="hbadge bo">Kır Düğünü</span></div>
-        <div class="hcard-body">
-          <div class="hcard-name">Gül Bahçesi</div>
-          <div class="hcard-cap">✦ 400 Kişiye Kadar</div>
-          <ul class="hcard-feats">
-            <li>1000 m² gül bahçesi</li>
-            <li>Havuz kenarı seremoni</li>
-            <li>Fotoğraf köşeleri</li>
-            <li>Çocuk oyun alanı</li>
-          </ul>
-          <button class="hcard-btn" onclick="OR('Gül Bahçesi')">Rezervasyon Yap</button>
+        <div class="stat-divider" aria-hidden="true"></div>
+        <div class="stat-item">
+          <span class="stat-figure" data-target="15">0</span>
+          <span class="stat-suffix">+</span>
+          <span class="stat-label">Yıl Deneyim</span>
         </div>
-      </div>
-
-      <div class="hcard">
-        <div class="hcard-img o3"><div class="hcard-icon">🌊</div><span class="hbadge bo">Kır Düğünü</span></div>
-        <div class="hcard-body">
-          <div class="hcard-name">Göl Terası</div>
-          <div class="hcard-cap">✦ 300 Kişiye Kadar</div>
-          <ul class="hcard-feats">
-            <li>Göl manzaralı teras</li>
-            <li>Tekne ile geliş imkânı</li>
-            <li>Gün batımı seremonisi</li>
-            <li>Özel otopark alanı</li>
-          </ul>
-          <button class="hcard-btn" onclick="OR('Göl Terası')">Rezervasyon Yap</button>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <footer id="iletisim">
-    <div class="footer-grid">
-      <div class="footer-col">
-        <div class="f-logo">✦ ALTIN SARAY</div>
-        <div class="f-logo-sub">Düğün Mekânları</div>
-        <p class="f-desc">İstanbul'un en prestijli düğün mekânı olarak 2009'dan bu yana hizmetinizdeyiz.</p>
-        <div class="social-row">
-          <a class="soc" href="#" aria-label="Instagram">📷</a>
-          <a class="soc" href="#" aria-label="Facebook">f</a>
-          <a class="soc" href="#" aria-label="Twitter">𝕏</a>
-          <a class="soc" href="#" aria-label="WhatsApp">💬</a>
-        </div>
-      </div>
-      <div class="footer-col">
-        <div class="f-title">İletişim</div>
-        <div class="f-info">
-          📍 Beşiktaş, İstanbul<br>
-          📞 <a href="tel:+902125551234">+90 212 555 12 34</a><br>
-          📧 <a href="mailto:info@altinsaray.com.tr">info@altinsaray.com.tr</a><br>
-          🌐 www.altinsaray.com.tr
-        </div>
-      </div>
-      <div class="footer-col">
-        <div class="f-title">Çalışma Saatleri</div>
-        <div class="f-info">
-          Pazartesi – Cuma<br>09:00 – 20:00<br><br>
-          Cumartesi – Pazar<br>10:00 – 22:00
+        <div class="stat-divider" aria-hidden="true"></div>
+        <div class="stat-item">
+          <span class="stat-figure" data-target="2000">0</span>
+          <span class="stat-suffix"></span>
+          <span class="stat-label">Kişi Kapasite</span>
         </div>
       </div>
     </div>
-    <div class="footer-bottom">
-      © 2025 Altın Saray Düğün Mekânları. Tüm hakları saklıdır.
-      ✦ Hayalinizdeki günü bize emanet edin.
-    </div>
-  </footer>
 
-</div><!-- /page-home -->
-
-<!-- ========== REZERVASYON ========== -->
-<div id="page-rezervasyon" class="page">
-  <div class="rezv-wrap-outer">
-    <button class="back-btn" onclick="SP('home')">← Geri Dön</button>
-    <div class="sec-eye">Ön Rezervasyon</div>
-    <h2 class="sec-title" style="margin-bottom:14px">Rezervasyon Yap</h2>
-    <div class="gold-line" style="margin-bottom:36px"></div>
-
-    <div id="rezv-form">
-
-      <!-- TAKVİM -->
-      <div class="fsec">
-        <div class="fsec-title">📅 Tarih &amp; Vakit Seçimi</div>
-        <div class="cal-hdr">
-          <button class="cal-nav-btn" onclick="PM()">◀</button>
-          <span class="cal-hdr-label" id="cal-lbl"></span>
-          <button class="cal-nav-btn" onclick="NM()">▶</button>
-        </div>
-        <div class="cal-days-hdr">
-          <div class="cal-dh">Pt</div>
-          <div class="cal-dh">Sa</div>
-          <div class="cal-dh">Ça</div>
-          <div class="cal-dh">Pe</div>
-          <div class="cal-dh">Cu</div>
-          <div class="cal-dh gold-dh">Ct</div>
-          <div class="cal-dh gold-dh">Pz</div>
-        </div>
-        <div class="cal-days-grid" id="cal-grid"></div>
-
-        <div class="legend">
-          <div class="leg-item"><div class="leg-dot leg-free"></div>Müsait</div>
-          <div class="leg-item"><div class="leg-dot leg-book"></div>Dolu</div>
-          <div class="leg-item"><div class="leg-dot leg-sel"></div>Seçiminiz</div>
-        </div>
-        <div class="legend-note">
-          Üst yarı = Gündüz (13:00–17:00) &nbsp;·&nbsp; Alt yarı = Akşam (19:00–23:00)
+    <!-- ABOUT -->
+    <section id="hakkimizda" class="content-section section-dark" aria-labelledby="aboutHeading">
+      <div class="section-container">
+        <div class="section-header reveal-item">
+          <p class="section-eyebrow">Hikayemiz</p>
+          <h2 id="aboutHeading" class="section-heading"><em>Hakkımızda</em></h2>
+          <div class="section-divider" aria-hidden="true"></div>
         </div>
 
-        <div class="sel-summary" id="sel-summary" style="display:none"></div>
-      </div>
-
-      <!-- SALON -->
-      <div class="fsec">
-        <div class="fsec-title">🏛️ Salon Seçimi</div>
-        <div class="fgrp">
-          <label>Salon Adı</label>
-          <select id="salon-sel">
-            <option value="">— Salon Seçin —</option>
-            <option value="Kristal Salon">Kristal Salon — 800 Kişi (Kapalı)</option>
-            <option value="Elmas Salon">Elmas Salon — 500 Kişi (Kapalı)</option>
-            <option value="Yıldız Salon">Yıldız Salon — 350 Kişi (Kapalı)</option>
-            <option value="Orman Bahçesi">Orman Bahçesi — 600 Kişi (Kır)</option>
-            <option value="Gül Bahçesi">Gül Bahçesi — 400 Kişi (Kır)</option>
-            <option value="Göl Terası">Göl Terası — 300 Kişi (Kır)</option>
-          </select>
-        </div>
-        <div class="fgrp">
-          <label>Tahmini Misafir Sayısı</label>
-          <input type="number" placeholder="Kişi sayısını giriniz" id="g-count" min="50" max="2000">
-        </div>
-      </div>
-
-      <!-- KİŞİSEL BİLGİLER -->
-      <div class="fsec">
-        <div class="fsec-title">👤 İletişim Bilgileri</div>
-        <div class="form-row">
-          <div class="fgrp">
-            <label>Ad Soyad</label>
-            <input type="text" placeholder="Adınız Soyadınız" id="f-name">
+        <div class="about-layout reveal-item">
+          <div class="about-quote-block">
+            <blockquote class="about-quote">
+              Altın Saray, 2009 yılından bu yana İstanbul'un kalbinde düğün organizasyonu alanında hizmet vermektedir.
+              Tecrübeli ekibimiz ve görkemli salonlarımızla, her çiftin hayalindeki özel günü mükemmel biçimde tasarlıyoruz.
+              Kapalı balosal salonlarımızdan açık hava kır bahçelerimize uzanan geniş seçenek yelpazemizle,
+              size özel bir düğün deneyimi sunuyoruz.
+            </blockquote>
           </div>
-          <div class="fgrp">
-            <label>Telefon</label>
-            <input type="tel" placeholder="0532 000 00 00" id="f-phone">
+          <div class="about-meta">
+            <div class="about-meta-item">
+              <span class="about-meta-icon">🏆</span>
+              <div>
+                <strong>15 Yıllık Deneyim</strong>
+                <span>2009'dan bu yana hizmetinizdeyiz</span>
+              </div>
+            </div>
+            <div class="about-meta-item">
+              <span class="about-meta-icon">📍</span>
+              <div>
+                <strong>İstanbul Kalbinde</strong>
+                <span>Beşiktaş, İstanbul konumunda</span>
+              </div>
+            </div>
+            <div class="about-meta-item">
+              <span class="about-meta-icon">✨</span>
+              <div>
+                <strong>Kişiye Özel Organizasyon</strong>
+                <span>Her düğün tamamen sizin için tasarlanır</span>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="fgrp">
-          <label>E-posta</label>
-          <input type="email" placeholder="ornek@mail.com" id="f-email">
+      </div>
+    </section>
+
+    <!-- VENUES / HALLS -->
+    <section id="salonlar" class="content-section" aria-labelledby="venuesHeading">
+      <div class="section-container">
+        <div class="section-header reveal-item">
+          <p class="section-eyebrow">Mekânlarımız</p>
+          <h2 id="venuesHeading" class="section-heading">Salonlarımız</h2>
+          <div class="section-divider" aria-hidden="true"></div>
+          <p class="section-subtitle">Kapalı salonlar ve açık hava kır alanlarından hayalinize en uygun mekânı seçin</p>
         </div>
-        <div class="fgrp">
-          <label>Notlar (isteğe bağlı)</label>
-          <textarea rows="3" placeholder="Özel isteklerinizi belirtebilirsiniz..." id="f-note"></textarea>
+
+        <div class="venue-grid">
+
+          <!-- Indoor venues -->
+          <article class="venue-card reveal-item" data-delay="0">
+            <div class="venue-card-media indoor-gradient-1">
+              <div class="venue-card-icon" aria-hidden="true">🏛️</div>
+              <span class="venue-badge badge-indoor">Kapalı Salon</span>
+              <div class="venue-card-media-overlay" aria-hidden="true"></div>
+            </div>
+            <div class="venue-card-body">
+              <h3 class="venue-name">Kristal Salon</h3>
+              <p class="venue-capacity">✦ 800 Kişiye Kadar</p>
+              <ul class="venue-features" aria-label="Özellikler">
+                <li>Avize ve kristal dekorasyon</li>
+                <li>Tam iklimlendirme sistemi</li>
+                <li>Profesyonel ses &amp; ışık</li>
+                <li>VIP misafir odası</li>
+              </ul>
+              <button class="venue-reserve-btn" onclick="openReservationFor('Kristal Salon')">
+                Rezervasyon Yap
+                <span class="btn-shine" aria-hidden="true"></span>
+              </button>
+            </div>
+          </article>
+
+          <article class="venue-card reveal-item" data-delay="80">
+            <div class="venue-card-media indoor-gradient-2">
+              <div class="venue-card-icon" aria-hidden="true">💎</div>
+              <span class="venue-badge badge-indoor">Kapalı Salon</span>
+              <div class="venue-card-media-overlay" aria-hidden="true"></div>
+            </div>
+            <div class="venue-card-body">
+              <h3 class="venue-name">Elmas Salon</h3>
+              <p class="venue-capacity">✦ 500 Kişiye Kadar</p>
+              <ul class="venue-features" aria-label="Özellikler">
+                <li>Özel dekor &amp; tablo duvarları</li>
+                <li>Şarap mahzeni erişimi</li>
+                <li>Canlı müzik sahnesi</li>
+                <li>Balayı odası dahil</li>
+              </ul>
+              <button class="venue-reserve-btn" onclick="openReservationFor('Elmas Salon')">
+                Rezervasyon Yap
+                <span class="btn-shine" aria-hidden="true"></span>
+              </button>
+            </div>
+          </article>
+
+          <article class="venue-card reveal-item" data-delay="160">
+            <div class="venue-card-media indoor-gradient-3">
+              <div class="venue-card-icon" aria-hidden="true">🌟</div>
+              <span class="venue-badge badge-indoor">Kapalı Salon</span>
+              <div class="venue-card-media-overlay" aria-hidden="true"></div>
+            </div>
+            <div class="venue-card-body">
+              <h3 class="venue-name">Yıldız Salon</h3>
+              <p class="venue-capacity">✦ 350 Kişiye Kadar</p>
+              <ul class="venue-features" aria-label="Özellikler">
+                <li>Tavan yıldız projeksiyon</li>
+                <li>Özel kokteyl alanı</li>
+                <li>Panoramik şehir manzarası</li>
+                <li>Terasa çıkış imkânı</li>
+              </ul>
+              <button class="venue-reserve-btn" onclick="openReservationFor('Yıldız Salon')">
+                Rezervasyon Yap
+                <span class="btn-shine" aria-hidden="true"></span>
+              </button>
+            </div>
+          </article>
+
+          <!-- Outdoor venues -->
+          <article class="venue-card reveal-item" data-delay="0">
+            <div class="venue-card-media outdoor-gradient-1">
+              <div class="venue-card-icon" aria-hidden="true">🌿</div>
+              <span class="venue-badge badge-outdoor">Kır Düğünü</span>
+              <div class="venue-card-media-overlay" aria-hidden="true"></div>
+            </div>
+            <div class="venue-card-body">
+              <h3 class="venue-name">Orman Bahçesi</h3>
+              <p class="venue-capacity">✦ 600 Kişiye Kadar</p>
+              <ul class="venue-features" aria-label="Özellikler">
+                <li>Doğal çam ormanı zemin</li>
+                <li>Açık hava dans pisti</li>
+                <li>Kır yemeği organizasyonu</li>
+                <li>Yağmur tentesi dahil</li>
+              </ul>
+              <button class="venue-reserve-btn" onclick="openReservationFor('Orman Bahçesi')">
+                Rezervasyon Yap
+                <span class="btn-shine" aria-hidden="true"></span>
+              </button>
+            </div>
+          </article>
+
+          <article class="venue-card reveal-item" data-delay="80">
+            <div class="venue-card-media outdoor-gradient-2">
+              <div class="venue-card-icon" aria-hidden="true">🌸</div>
+              <span class="venue-badge badge-outdoor">Kır Düğünü</span>
+              <div class="venue-card-media-overlay" aria-hidden="true"></div>
+            </div>
+            <div class="venue-card-body">
+              <h3 class="venue-name">Gül Bahçesi</h3>
+              <p class="venue-capacity">✦ 400 Kişiye Kadar</p>
+              <ul class="venue-features" aria-label="Özellikler">
+                <li>1000 m² gül bahçesi</li>
+                <li>Havuz kenarı seremoni</li>
+                <li>Fotoğraf köşeleri</li>
+                <li>Çocuk oyun alanı</li>
+              </ul>
+              <button class="venue-reserve-btn" onclick="openReservationFor('Gül Bahçesi')">
+                Rezervasyon Yap
+                <span class="btn-shine" aria-hidden="true"></span>
+              </button>
+            </div>
+          </article>
+
+          <article class="venue-card reveal-item" data-delay="160">
+            <div class="venue-card-media outdoor-gradient-3">
+              <div class="venue-card-icon" aria-hidden="true">🌊</div>
+              <span class="venue-badge badge-outdoor">Kır Düğünü</span>
+              <div class="venue-card-media-overlay" aria-hidden="true"></div>
+            </div>
+            <div class="venue-card-body">
+              <h3 class="venue-name">Göl Terası</h3>
+              <p class="venue-capacity">✦ 300 Kişiye Kadar</p>
+              <ul class="venue-features" aria-label="Özellikler">
+                <li>Göl manzaralı teras</li>
+                <li>Tekne ile geliş imkânı</li>
+                <li>Gün batımı seremonisi</li>
+                <li>Özel otopark alanı</li>
+              </ul>
+              <button class="venue-reserve-btn" onclick="openReservationFor('Göl Terası')">
+                Rezervasyon Yap
+                <span class="btn-shine" aria-hidden="true"></span>
+              </button>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="iletisim" class="site-footer" role="contentinfo">
+      <div class="footer-glow" aria-hidden="true"></div>
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="footer-logo">✦ ALTIN SARAY</div>
+          <div class="footer-logo-tagline">Düğün Mekânları</div>
+          <p class="footer-brand-desc">İstanbul'un en prestijli düğün mekânı olarak 2009'dan bu yana hizmetinizdeyiz.</p>
+          <div class="footer-social-row" role="list" aria-label="Sosyal medya">
+            <a class="footer-social-btn" href="#" role="listitem" aria-label="Instagram">📷</a>
+            <a class="footer-social-btn" href="#" role="listitem" aria-label="Facebook">f</a>
+            <a class="footer-social-btn" href="#" role="listitem" aria-label="Twitter">𝕏</a>
+            <a class="footer-social-btn" href="#" role="listitem" aria-label="WhatsApp">💬</a>
+          </div>
+        </div>
+
+        <div class="footer-contact">
+          <h3 class="footer-col-title">İletişim</h3>
+          <address class="footer-contact-info">
+            📍 Beşiktaş, İstanbul<br />
+            📞 <a href="tel:+902125551234">+90 212 555 12 34</a><br />
+            📧 <a href="mailto:info@altinsaray.com.tr">info@altinsaray.com.tr</a><br />
+            🌐 www.altinsaray.com.tr
+          </address>
+        </div>
+
+        <div class="footer-hours">
+          <h3 class="footer-col-title">Çalışma Saatleri</h3>
+          <div class="footer-hours-info">
+            <div class="hours-row">
+              <span>Pazartesi – Cuma</span>
+              <span>09:00 – 20:00</span>
+            </div>
+            <div class="hours-row">
+              <span>Cumartesi – Pazar</span>
+              <span>10:00 – 22:00</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <button class="submit-btn" onclick="SUB()">✦ Rezervasyon Talebi Gönder ✦</button>
-      <p class="form-note">Talebiniz alındıktan sonra 24 saat içinde sizi arayacağız.</p>
-    </div>
-
-    <!-- BAŞARI EKRANI -->
-    <div id="success-box" style="display:none">
-      <div class="success-wrap">
-        <div class="success-icon">✅</div>
-        <h2>Talebiniz Alındı!</h2>
-        <p>Rezervasyon talebiniz başarıyla iletildi. Ekibimiz en kısa sürede sizinle iletişime geçecektir.</p>
-        <div class="success-detail" id="suc-detail"></div>
-        <button class="btn-prim" style="margin-top:16px" onclick="SP('home')">Ana Sayfaya Dön</button>
+      <div class="footer-bottom-bar">
+        <span>© 2025 Altın Saray Düğün Mekânları. Tüm hakları saklıdır.</span>
+        <span class="footer-bottom-motto">✦ Hayalinizdeki günü bize emanet edin.</span>
       </div>
-    </div>
-  </div>
-</div>
+    </footer>
 
-<script src="script.js"></script>
+  </div><!-- /page-home -->
+
+
+  <!-- ─── RESERVATION PAGE ─── -->
+  <div id="page-rezervasyon" class="page">
+    <div class="reservation-layout">
+
+      <button class="back-btn" onclick="navigateToPage('home')" aria-label="Ana sayfaya geri dön">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Geri Dön
+      </button>
+
+      <div class="section-header" style="text-align:left;max-width:none;margin-bottom:var(--space-8)">
+        <p class="section-eyebrow">Ön Rezervasyon</p>
+        <h2 class="section-heading">Rezervasyon Yap</h2>
+        <div class="section-divider" style="margin-left:0" aria-hidden="true"></div>
+      </div>
+
+      <div id="reservationForm">
+
+        <!-- DATE & TIME PICKER -->
+        <div class="form-card">
+          <h3 class="form-card-title">
+            <span class="form-card-icon">📅</span>
+            Tarih &amp; Vakit Seçimi
+          </h3>
+
+          <div class="calendar-nav" role="group" aria-label="Takvim navigasyonu">
+            <button class="calendar-nav-btn" onclick="goToPrevMonth()" aria-label="Önceki ay">◀</button>
+            <span class="calendar-month-label" id="calendarMonthLabel"></span>
+            <button class="calendar-nav-btn" onclick="goToNextMonth()" aria-label="Sonraki ay">▶</button>
+          </div>
+
+          <div class="calendar-weekdays" role="row" aria-label="Haftanın günleri">
+            <div class="weekday-label">Pt</div>
+            <div class="weekday-label">Sa</div>
+            <div class="weekday-label">Ça</div>
+            <div class="weekday-label">Pe</div>
+            <div class="weekday-label">Cu</div>
+            <div class="weekday-label is-weekend">Ct</div>
+            <div class="weekday-label is-weekend">Pz</div>
+          </div>
+
+          <div class="calendar-days-grid" id="calendarGrid" role="grid" aria-label="Takvim"></div>
+
+          <div class="calendar-legend" role="list" aria-label="Renk açıklamaları">
+            <div class="legend-item" role="listitem">
+              <div class="legend-swatch swatch-free" aria-hidden="true"></div>
+              <span>Müsait</span>
+            </div>
+            <div class="legend-item" role="listitem">
+              <div class="legend-swatch swatch-booked" aria-hidden="true"></div>
+              <span>Dolu</span>
+            </div>
+            <div class="legend-item" role="listitem">
+              <div class="legend-swatch swatch-selected" aria-hidden="true"></div>
+              <span>Seçiminiz</span>
+            </div>
+          </div>
+          <p class="calendar-slot-hint">
+            Üst yarı = Gündüz (13:00–17:00) &nbsp;·&nbsp; Alt yarı = Akşam (19:00–23:00)
+          </p>
+
+          <div class="selection-summary" id="selectionSummary" role="status" aria-live="polite" style="display:none"></div>
+        </div>
+
+        <!-- VENUE SELECTION -->
+        <div class="form-card">
+          <h3 class="form-card-title">
+            <span class="form-card-icon">🏛️</span>
+            Salon Seçimi
+          </h3>
+          <div class="field-group">
+            <label class="field-label" for="venueSelect">Salon Adı</label>
+            <select class="field-control" id="venueSelect">
+              <option value="">— Salon Seçin —</option>
+              <option value="Kristal Salon">Kristal Salon — 800 Kişi (Kapalı)</option>
+              <option value="Elmas Salon">Elmas Salon — 500 Kişi (Kapalı)</option>
+              <option value="Yıldız Salon">Yıldız Salon — 350 Kişi (Kapalı)</option>
+              <option value="Orman Bahçesi">Orman Bahçesi — 600 Kişi (Kır)</option>
+              <option value="Gül Bahçesi">Gül Bahçesi — 400 Kişi (Kır)</option>
+              <option value="Göl Terası">Göl Terası — 300 Kişi (Kır)</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="guestCount">Tahmini Misafir Sayısı</label>
+            <input class="field-control" type="number" id="guestCount" placeholder="Kişi sayısını giriniz" min="50" max="2000" />
+          </div>
+        </div>
+
+        <!-- CONTACT INFO -->
+        <div class="form-card">
+          <h3 class="form-card-title">
+            <span class="form-card-icon">👤</span>
+            İletişim Bilgileri
+          </h3>
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label" for="fullName">Ad Soyad</label>
+              <input class="field-control" type="text" id="fullName" placeholder="Adınız Soyadınız" autocomplete="name" />
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="phoneNumber">Telefon</label>
+              <input class="field-control" type="tel" id="phoneNumber" placeholder="0532 000 00 00" autocomplete="tel" />
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="emailAddress">E-posta</label>
+            <input class="field-control" type="email" id="emailAddress" placeholder="ornek@mail.com" autocomplete="email" />
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="specialNotes">Notlar (isteğe bağlı)</label>
+            <textarea class="field-control" id="specialNotes" rows="3" placeholder="Özel isteklerinizi belirtebilirsiniz..."></textarea>
+          </div>
+        </div>
+
+        <button class="reservation-submit-btn" onclick="submitReservation()">
+          ✦ Rezervasyon Talebi Gönder ✦
+        </button>
+        <p class="reservation-footer-note">Talebiniz alındıktan sonra 24 saat içinde sizi arayacağız.</p>
+
+      </div><!-- /reservationForm -->
+
+      <!-- SUCCESS STATE -->
+      <div id="successState" style="display:none" aria-live="assertive">
+        <div class="success-card">
+          <div class="success-icon-wrap" aria-hidden="true">✅</div>
+          <h2 class="success-title">Talebiniz Alındı!</h2>
+          <p class="success-body">Rezervasyon talebiniz başarıyla iletildi. Ekibimiz en kısa sürede sizinle iletişime geçecektir.</p>
+          <dl class="success-details" id="successDetails"></dl>
+          <button class="btn-primary" style="margin-top:var(--space-6)" onclick="navigateToPage('home')">
+            Ana Sayfaya Dön
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /page-rezervasyon -->
+
+  <script src="script.js"></script>
 </body>
 </html>
