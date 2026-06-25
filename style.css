@@ -317,6 +317,67 @@ body {
     linear-gradient(170deg, #06060c 0%, #120d02 42%, #06060c 100%);
 }
 
+/* ── Cinematic hero background (Nano Banana AI image) ───────── */
+.hero-cinematic-bg {
+  position: absolute;
+  inset: -18%;           /* extra room for zoom travel */
+  background-image: url('https://image.pollinations.ai/prompt/elegant%20wedding%20couple%20holding%20hands%20smiling%20golden%20hour%20sunset%20luxury%20palace%20venue%20bokeh%20romantic%20cinematic%20film%20photography%20warm%20moody%20Istanbul?width=1600&height=1000&seed=88&nologo=true');
+  background-size: cover;
+  background-position: center 35%;
+  transform: scale(1.18);   /* start zoomed-in → couple close */
+  transform-origin: center center;
+  will-change: transform;
+  filter: brightness(0.48) saturate(1.15);
+  transition: none;
+}
+
+/* Warm cinematic colour grade */
+.hero-grade-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 55% 65% at 50% 48%, rgba(212, 175, 55, 0.10) 0%, transparent 60%),
+    linear-gradient(to bottom, rgba(4, 4, 10, 0.28) 0%, rgba(4, 4, 10, 0.08) 42%, rgba(14, 14, 14, 0.82) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Soft vignette frame */
+.hero-vignette {
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 180px rgba(0, 0, 0, 0.65);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ── Transparent nav → frosted when scrolled ────────────────── */
+#navbar.nav-transparent {
+  background: rgba(8, 8, 8, 0.0);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  border-bottom-color: rgba(212, 175, 55, 0.0);
+  box-shadow: none;
+}
+
+#navbar.nav-transparent .nav-menu a {
+  color: rgba(237, 229, 208, 0.82);
+}
+
+#navbar.nav-transparent .nav-cta-btn {
+  color: rgba(212, 175, 55, 0.92);
+  border-color: rgba(212, 175, 55, 0.45);
+}
+
+#navbar {
+  transition:
+    background     0.55s var(--ease-smooth),
+    backdrop-filter 0.55s,
+    -webkit-backdrop-filter 0.55s,
+    border-color   0.55s var(--ease-smooth),
+    box-shadow     0.55s var(--ease-smooth);
+}
+
 .hero-ambient-glow {
   position: absolute;
   width: 600px; height: 600px;
@@ -1448,4 +1509,220 @@ textarea.field-control { resize: vertical; min-height: 80px; }
   .day-halves   { height: 38px; }
   .day-number   { font-size: 10px; }
   .success-card { padding: var(--space-8) var(--space-5); }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   SOCIAL MEDIA ICONS — branded colours
+   ═══════════════════════════════════════════════════════════════ */
+.footer-social-row {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+.footer-social-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  transition:
+    transform     var(--dur-base) var(--ease-spring),
+    box-shadow    var(--dur-base) var(--ease-smooth),
+    background    var(--dur-base) var(--ease-smooth),
+    border-color  var(--dur-base) var(--ease-smooth);
+}
+
+.footer-social-btn:hover {
+  transform: translateY(-4px) scale(1.08);
+}
+
+/* Instagram — gradient */
+.soc-instagram {
+  background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+  border-color: transparent;
+}
+.soc-instagram:hover {
+  box-shadow: 0 8px 24px rgba(253, 29, 29, 0.45);
+  background: linear-gradient(135deg, #9b42d6, #ff2323, #ffc04a);
+}
+
+/* Facebook — blue */
+.soc-facebook {
+  background: #1877F2;
+  border-color: transparent;
+}
+.soc-facebook:hover {
+  background: #1a85ff;
+  box-shadow: 0 8px 24px rgba(24, 119, 242, 0.50);
+}
+
+/* TikTok — dark with cyan accent */
+.soc-tiktok {
+  background: #111;
+  border-color: rgba(105, 201, 208, 0.35);
+}
+.soc-tiktok:hover {
+  background: #1a1a1a;
+  border-color: #69C9D0;
+  box-shadow: 0 8px 24px rgba(105, 201, 208, 0.35);
+}
+
+/* WhatsApp — green */
+.soc-whatsapp {
+  background: #25D366;
+  border-color: transparent;
+}
+.soc-whatsapp:hover {
+  background: #20c05a;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.50);
+}
+
+/* ── Contact row icons ── */
+.footer-contact-info {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  font-style: normal;
+  font-weight: 300;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  line-height: var(--leading-snug);
+}
+
+.contact-icon {
+  width: 16px;
+  text-align: center;
+  color: var(--color-gold-700);
+  flex-shrink: 0;
+  font-size: 13px;
+}
+
+.footer-contact-info a {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color var(--dur-base) var(--ease-smooth);
+}
+.footer-contact-info a:hover { color: var(--color-gold-500); }
+
+/* ═══════════════════════════════════════════════════════════════
+   GOOGLE MAPS section
+   ═══════════════════════════════════════════════════════════════ */
+.footer-map-section {
+  grid-column: 1 / -1;
+  padding-top: var(--space-8);
+  border-top: 1px solid rgba(212, 175, 55, 0.10);
+  margin-top: var(--space-4);
+}
+
+.footer-map-wrapper {
+  position: relative;
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  overflow: hidden;
+}
+
+.footer-map-wrapper iframe {
+  display: block;
+  width: 100%;
+}
+
+.map-directions-btn {
+  position: absolute;
+  bottom: var(--space-4);
+  right: var(--space-4);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--color-gold-500);
+  color: var(--color-text-inverse);
+  text-decoration: none;
+  padding: var(--space-2) var(--space-5);
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  transition:
+    background  var(--dur-base) var(--ease-smooth),
+    transform   var(--dur-base) var(--ease-spring),
+    box-shadow  var(--dur-base) var(--ease-smooth);
+}
+
+.map-directions-btn:hover {
+  background: var(--color-gold-300);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212,175,55,0.35);
+}
+
+/* ── WhatsApp floating button ── */
+.whatsapp-float {
+  position: fixed;
+  bottom: var(--space-8);
+  right: var(--space-8);
+  z-index: 90;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #25D366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 26px;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(37, 211, 102, 0.55);
+  animation: waPulse 2.5s ease-in-out infinite;
+  transition: transform var(--dur-base) var(--ease-spring), box-shadow var(--dur-base);
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.12);
+  box-shadow: 0 8px 30px rgba(37, 211, 102, 0.65);
+  animation: none;
+}
+
+@keyframes waPulse {
+  0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,0.55); }
+  50%       { box-shadow: 0 4px 32px rgba(37,211,102,0.80), 0 0 0 8px rgba(37,211,102,0.12); }
+}
+
+.whatsapp-float-tooltip {
+  position: absolute;
+  right: 66px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(10,10,10,0.92);
+  color: #fff;
+  font-size: 12px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.1);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-smooth);
+}
+
+.whatsapp-float:hover .whatsapp-float-tooltip {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .whatsapp-float { bottom: var(--space-5); right: var(--space-5); width: 50px; height: 50px; font-size: 22px; }
+  .footer-map-section { grid-column: 1; }
 }

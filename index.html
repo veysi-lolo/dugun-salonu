@@ -8,12 +8,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <!-- ─── NAVIGATION ─── -->
-  <nav id="navbar" role="navigation" aria-label="Ana navigasyon">
+  <nav id="navbar" class="nav-transparent" role="navigation" aria-label="Ana navigasyon">
     <div class="nav-inner">
       <button class="nav-logo" onclick="navigateToPage('home')" aria-label="Ana sayfaya git">
         <span class="nav-logo-mark">✦</span>
@@ -43,6 +44,10 @@
 
     <!-- HERO -->
     <section id="hero" class="hero-section" aria-label="Hero bölümü">
+      <!-- Cinematic AI couple photo — Nano Banana / Pollinations AI -->
+      <div class="hero-cinematic-bg" id="heroCinematicBg" aria-hidden="true"></div>
+      <div class="hero-grade-overlay" aria-hidden="true"></div>
+      <div class="hero-vignette" aria-hidden="true"></div>
       <div class="hero-ambient-glow" aria-hidden="true"></div>
       <div class="hero-particle-field" id="particleField" aria-hidden="true"></div>
       <div class="hero-bottom-fade" aria-hidden="true"></div>
@@ -306,20 +311,44 @@
           <div class="footer-logo-tagline">Düğün Mekânları</div>
           <p class="footer-brand-desc">İstanbul'un en prestijli düğün mekânı olarak 2009'dan bu yana hizmetinizdeyiz.</p>
           <div class="footer-social-row" role="list" aria-label="Sosyal medya">
-            <a class="footer-social-btn" href="#" role="listitem" aria-label="Instagram">📷</a>
-            <a class="footer-social-btn" href="#" role="listitem" aria-label="Facebook">f</a>
-            <a class="footer-social-btn" href="#" role="listitem" aria-label="Twitter">𝕏</a>
-            <a class="footer-social-btn" href="#" role="listitem" aria-label="WhatsApp">💬</a>
+            <a class="footer-social-btn soc-instagram" href="https://instagram.com/altinsaray" target="_blank" rel="noopener" role="listitem" aria-label="Instagram">
+              <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+            </a>
+            <a class="footer-social-btn soc-facebook" href="https://facebook.com/altinsaray" target="_blank" rel="noopener" role="listitem" aria-label="Facebook">
+              <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
+            </a>
+            <a class="footer-social-btn soc-tiktok" href="https://tiktok.com/@altinsaray" target="_blank" rel="noopener" role="listitem" aria-label="TikTok">
+              <i class="fa-brands fa-tiktok" aria-hidden="true"></i>
+            </a>
+            <a class="footer-social-btn soc-whatsapp" href="https://wa.me/905XXXXXXXXX" target="_blank" rel="noopener" role="listitem" aria-label="WhatsApp">
+              <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+            </a>
           </div>
         </div>
 
         <div class="footer-contact">
           <h3 class="footer-col-title">İletişim</h3>
           <address class="footer-contact-info">
-            📍 Beşiktaş, İstanbul<br />
-            📞 <a href="tel:+902125551234">+90 212 555 12 34</a><br />
-            📧 <a href="mailto:info@altinsaray.com.tr">info@altinsaray.com.tr</a><br />
-            🌐 www.altinsaray.com.tr
+            <span class="contact-row">
+              <i class="fa-solid fa-location-dot contact-icon" aria-hidden="true"></i>
+              Beşiktaş, İstanbul
+            </span>
+            <span class="contact-row">
+              <i class="fa-solid fa-phone contact-icon" aria-hidden="true"></i>
+              <a href="tel:+905XXXXXXXXX">+90 5XX XXX XX XX</a>
+            </span>
+            <span class="contact-row">
+              <i class="fa-brands fa-whatsapp contact-icon" style="color:#25D366" aria-hidden="true"></i>
+              <a href="https://wa.me/905XXXXXXXXX" target="_blank" rel="noopener">WhatsApp ile yaz</a>
+            </span>
+            <span class="contact-row">
+              <i class="fa-solid fa-envelope contact-icon" aria-hidden="true"></i>
+              <a href="mailto:info@altinsaray.com.tr">info@altinsaray.com.tr</a>
+            </span>
+            <span class="contact-row">
+              <i class="fa-solid fa-globe contact-icon" aria-hidden="true"></i>
+              www.altinsaray.com.tr
+            </span>
           </address>
         </div>
 
@@ -342,6 +371,31 @@
         <span>© 2025 Altın Saray Düğün Mekânları. Tüm hakları saklıdır.</span>
         <span class="footer-bottom-motto">✦ Hayalinizdeki günü bize emanet edin.</span>
       </div>
+      <!-- GOOGLE MAPS -->
+      <div class="footer-map-section">
+        <h3 class="footer-col-title" style="margin-bottom:var(--space-5)">
+          <i class="fa-solid fa-map-location-dot" aria-hidden="true" style="margin-right:8px;color:var(--color-gold-500)"></i>
+          Konumumuz
+        </h3>
+        <div class="footer-map-wrapper">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3009.085!2d29.0074!3d41.0432!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cab7650656bd63%3A0x8ca058b28c20b6c3!2sBe%C5%9Fikta%C5%9F%2C%20Istanbul!5e0!3m2!1sen!2str!4v1719000000000!5m2!1sen!2str"
+            width="100%"
+            height="280"
+            style="border:0;filter:grayscale(1) invert(0.85) sepia(0.25) hue-rotate(180deg) brightness(0.85) contrast(1.1)"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Altın Saray Konum"
+            aria-label="Google Haritalar üzerinde Altın Saray konumu">
+          </iframe>
+          <a class="map-directions-btn" href="https://maps.google.com/?q=Beşiktaş,İstanbul" target="_blank" rel="noopener" aria-label="Google Maps'ta yol tarifi al">
+            <i class="fa-solid fa-route" aria-hidden="true"></i>
+            Yol Tarifi Al
+          </a>
+        </div>
+      </div>
+
     </footer>
 
   </div><!-- /page-home -->

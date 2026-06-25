@@ -308,11 +308,15 @@ function closeMobileMenu() {
 /* ═══════════════════════════════════════════════════════════════
    FORM SUBMISSION
    ═══════════════════════════════════════════════════════════════ */
+/* ── WhatsApp business number — update this to real number ── */
+const WHATSAPP_BUSINESS_NUMBER = '905XXXXXXXXX'; // ← Buraya gerçek numara
+
 function submitReservation() {
   const fullName    = document.getElementById('fullName')?.value.trim()    || '';
   const phoneNumber = document.getElementById('phoneNumber')?.value.trim() || '';
   const emailAddress= document.getElementById('emailAddress')?.value.trim()|| '';
   const venueName   = document.getElementById('venueSelect')?.value        || '';
+  const specialNotes= document.getElementById('specialNotes')?.value.trim()|| '';
 
   // Validation
   if (!fullName || !phoneNumber || !emailAddress) {
@@ -329,8 +333,8 @@ function submitReservation() {
   }
 
   const slotLabel =
-    selectedSlot === 'top'  ? 'Gündüz (13:00 – 17:00)' :
-    selectedSlot === 'bot'  ? 'Akşam (19:00 – 23:00)'  :
+    selectedSlot === 'top'  ? 'Gündüz (13:00–17:00)' :
+    selectedSlot === 'bot'  ? 'Akşam (19:00–23:00)'  :
                               'Gündüz + Akşam (Tam Gün)';
 
   const formattedDate =
@@ -338,7 +342,33 @@ function submitReservation() {
 
   const venueShortName = venueName.split(' —')[0];
 
-  // Populate success screen
+  // ── Build WhatsApp message ──────────────────────────────────
+  const waMessage =
+    `🌹 *YENİ REZERVASYON TALEBİ — ALTIN SARAY*
+
+` +
+    `👤 *Ad Soyad:* ${fullName}
+` +
+    `📞 *Telefon:* ${phoneNumber}
+` +
+    `📧 *E-posta:* ${emailAddress}
+
+` +
+    `🏛️ *Salon:* ${venueShortName}
+` +
+    `📅 *Tarih:* ${formattedDate}
+` +
+    `⏰ *Vakit:* ${slotLabel}
+` +
+    (specialNotes ? `
+📝 *Notlar:* ${specialNotes}
+` : '') +
+    `
+_Altın Saray web sitesi üzerinden gönderildi._`;
+
+  const waURL = `https://wa.me/${WHATSAPP_BUSINESS_NUMBER}?text=${encodeURIComponent(waMessage)}`;
+
+  // ── Populate success screen ─────────────────────────────────
   const detailsEl = document.getElementById('successDetails');
   if (detailsEl) {
     detailsEl.innerHTML =
@@ -349,13 +379,17 @@ function submitReservation() {
       `<dd><strong>Telefon:</strong>${phoneNumber}</dd>`;
   }
 
-  // Switch views
+  // ── Show success screen ─────────────────────────────────────
   const formEl    = document.getElementById('reservationForm');
   const successEl = document.getElementById('successState');
   if (formEl)    formEl.style.display    = 'none';
   if (successEl) successEl.style.display = 'block';
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // ── Open WhatsApp in new tab (sends notification to owner) ──
+  // Small delay so success screen shows first
+  setTimeout(() => { window.open(waURL, '_blank', 'noopener,noreferrer'); }, 600);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -443,16 +477,41 @@ function initHeroParticles() {
   }
 }
 
-/* ── Sticky nav shadow ──────────────────────────────────────── */
+/* ── Sticky nav + cinematic parallax zoom ───────────────────── */
 function initNavbarScroll() {
   const navbar = document.getElementById('navbar');
+  const heroBg = document.getElementById('heroCinematicBg');
+  const heroEl = document.getElementById('hero');
   if (!navbar) return;
 
+  // Load the Nano Banana / Pollinations AI couple image
+  if (heroBg) {
+    const imagePrompt = 'elegant%20wedding%20couple%20holding%20hands%20smiling%20golden%20hour%20sunset%20luxury%20palace%20venue%20bokeh%20romantic%20cinematic%20film%20photography%20warm%20moody%20Istanbul';
+    heroBg.style.backgroundImage = `url('https://image.pollinations.ai/prompt/${imagePrompt}?width=1600&height=1000&seed=88&nologo=true')`;
+  }
+
+  const heroHeight = () => (heroEl ? heroEl.offsetHeight : window.innerHeight);
+
   const scrollHandler = () => {
-    navbar.classList.toggle('is-scrolled', window.scrollY > 20);
+    const scrollY    = window.scrollY;
+    const heroH      = heroHeight();
+    // Nav: transparent on hero, frosted after
+    const pastHero   = scrollY > heroH * 0.15;
+    navbar.classList.toggle('nav-transparent', !pastHero);
+    navbar.classList.toggle('is-scrolled',      pastHero);
+
+    // Cinematic parallax zoom: zoomed-in at top (close couple shot),
+    // gradually zooms out and drifts up as user scrolls down
+    if (heroBg && heroEl) {
+      const progress = Math.min(scrollY / heroH, 1);             // 0→1
+      const scale    = 1.18 - (progress * 0.18);                 // 1.18→1.0
+      const yPct     = progress * 12;                            // 0%→12% upward drift
+      heroBg.style.transform = `scale(${scale}) translateY(-${yPct}%)`;
+    }
   };
 
   window.addEventListener('scroll', scrollHandler, { passive: true });
+  scrollHandler(); // run once on load
 }
 
 /* ── Page visibility init (hide inactive pages) ─────────────── */
@@ -472,4 +531,26 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeroParticles();
   initRevealAnimations();
   animateStatCounters();
+  injectWhatsAppFloat();
 });
+
+/* ── WhatsApp floating button (injected dynamically) ── */
+function injectWhatsAppFloat() {
+  // Avoid duplicates
+  if (document.getElementById('waFloatBtn')) return;
+
+  const btn = document.createElement('a');
+  btn.id        = 'waFloatBtn';
+  btn.className = 'whatsapp-float';
+  btn.href      = `https://wa.me/${WHATSAPP_BUSINESS_NUMBER}?text=${encodeURIComponent('Merhaba! Rezervasyon hakkında bilgi almak istiyorum.')}`;
+  btn.target    = '_blank';
+  btn.rel       = 'noopener noreferrer';
+  btn.setAttribute('aria-label', 'WhatsApp ile iletişim kur');
+
+  btn.innerHTML = `
+    <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+    <span class="whatsapp-float-tooltip">Bize WhatsApp'tan yazın</span>
+  `;
+
+  document.body.appendChild(btn);
+}
